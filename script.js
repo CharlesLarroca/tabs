@@ -83,7 +83,49 @@ const generateTabItems = (elem, tabContent) =>{
     .filter(filterFunction)
     .map(
       record => {
-        return DOMPurify
+        return DOMPurify.sanitize(`
+          <div class='records'>
+            <div class='avatar-wrapper'>
+              <img src='${record.src}' class='avatar avatar-${record.type} alt='Profile'>
+            </div>
+            <div class='content'>
+              <div class='title-description'>
+                <div class='title'>
+                  ${record.name}
+                </div>
+                <div class='description'>
+                  ${record.description}
+                </div>
+              </div>
+              <a href='#explore-more' class='explore-button' title='Explore'>
+                Explore
+              </a>
+            </div>
+          </div>
+        `)
       }
     )
+    tabContent.innerHTML = mappedRecord.join('')
 }
+
+//Lindando com seleção para load inicial
+const currentHash = window.location.hash
+
+const activeLink = document.querySelector('.tabs a')
+
+if(currentHash){
+  const visibleHash = document.getElementById(`${currentHash}`)
+  if(visibleHash){
+    activeLink = visibleHash
+  }
+}
+
+console.log(currentHash, activeLink)
+
+
+const activeTab = document.querySelector(`#${activeLink.id}-content`)
+
+activeLink.classList.toggle('active')
+activeTab.classList.toggle('tab-content-active')
+
+generateTabItems(activeLink, activeTab)
